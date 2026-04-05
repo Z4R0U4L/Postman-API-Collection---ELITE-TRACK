@@ -1,0 +1,1141 @@
+{
+  "info": {
+    "_postman_id": "f9e05826-a905-498b-aa82-481b0c219576",
+    "name": "ELITE TRACK",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51185095",
+    "_collection_link": "https://go.postman.co/collection/51185095-f9e05826-a905-498b-aa82-481b0c219576?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Authentification",
+      "item": [
+        {
+          "name": "Register - Commercant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {\r",
+                  "  const json = pm.response.json();\r",
+                  "  pm.collectionVariables.set('token', json.token);\r",
+                  "  console.log('Token sauvegardé:', json.token);\r",
+                  "  pm.test('Compte créé avec succès', () => pm.expect(pm.response.code).to.equal(201));\r",
+                  "  pm.test('Token présent', () => pm.expect(json.token).to.be.a('string'));\r",
+                  "  pm.test('Rôle = merchant', () => pm.expect(json.user.role).to.equal('merchant'));\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Zaroual Medp\",\r\n  \"email\": \"commercant11111@elitetrack.com\",\r\n  \"password\": \"password123\",\r\n  \"role\": \"merchant\",\r\n  \"phone\": \"+212600000001\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/auth/register",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register - Livreur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "const json = pm.response.json();\r",
+                  "console.log('token sauvegardé', json.token);\r",
+                  "pm.test('Compte Livreur créé avec succès', () => {pm.expect(pm.response.code).to.eql(201)}) \r",
+                  "pm.test('Token est présent dans la réponse', () => {pm.expect(json.token).to.not.be.null})\r",
+                  "pm.test('role=driver', () => {pm.expect(json.user.role).to.eql(\"driver\")})\r",
+                  "pm.collectionVariables.set('driver_id', json.user.id);\r",
+                  "console.log('Driver ID sauvegardé:', json.user.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Zaroual driver\",\r\n  \"email\": \"driver555551@elitetrack.com\",\r\n  \"password\": \"password123\",\r\n  \"role\": \"driver\",\r\n  \"phone\": \"+212600000001\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/auth/register",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Avec Email existe déjà",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () {\r",
+                  "    pm.response.to.have.status(409);\r",
+                  "});\r",
+                  "pm.test(\"Response body contains 'Email already exists'\", () => { pm.expect(pm.response.text()).to.include('Email already exists'); });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Zaroual Medp\",\r\n  \"email\": \"commercant1@elitetrack.com\",\r\n  \"password\": \"password123\",\r\n  \"role\": \"merchant\",\r\n  \"phone\": \"+212600000001\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/auth/register",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Commercant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "const json = pm.response.json();\r",
+                  "pm.test(\"Response should contain a token\", () => {pm.expect(json.token).to.not.be.null;});\r",
+                  "pm.test(\"Response should contain a user object\", () => {pm.expect(json.user).to.not.be.null;});\r",
+                  "pm.test(\"User object should contain a username\", () => {pm.expect(json.user.name).to.not.be.null;});\r",
+                  "pm.collectionVariables.set(\"token\", json.token);\r",
+                  "pm.collectionVariables.set(\"user_id\", json.user.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"commercant11111@elitetrack.com\",\r\n  \"password\": \"password123\"\r\n}"
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/auth/login",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Livreur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "const json = pm.response.json();\r",
+                  "pm.test(\"Response should contain a token\", () => {pm.expect(json.token).to.not.be.null;});\r",
+                  "pm.test(\"Response should contain a user object\", () => {pm.expect(json.user).to.not.be.null;});\r",
+                  "pm.test(\"User object should contain a username\", () => {pm.expect(json.user.name).to.not.be.null;});\r",
+                  "pm.collectionVariables.set(\"token_Livreur\", json.token);\r",
+                  "pm.collectionVariables.set('driver_id', json.user.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"driver555551@elitetrack.com\",\r\n  \"password\": \"password123\"\r\n}"
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/auth/login",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login avec Identifiants invalides",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "pm.test(\"message is 'Invalid credentials'\", () => { pm.expect(pm.response.json().message).to.eql('Invalid credentials') });\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"commernt1@elitetrack.com\",\r\n  \"password\": \"password123\"\r\n}"
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/auth/login",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET profile utilisateur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"name is Zaroual Medp\", () => {pm.expect(pm.response.json().name).to.eql(\"Zaroual Medp\")});",
+                  "pm.test(\"email is commercant1@elitetrack.com\", () => {pm.expect(pm.response.json().email).to.eql(\"commercant1@elitetrack.com\")});",
+                  "pm.test(\"role is merchant\", () => {pm.expect(pm.response.json().role).to.eql(\"merchant\")});",
+                  "pm.test(\"is_active is true\", () => {pm.expect(pm.response.json().is_active).to.eql(true)});",
+                  "pm.test(\"phone is +212600000001\", () => {pm.expect(pm.response.json().phone).to.eql(\"+212600000001\")});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI3MzE1NWNkLTc4ZmYtNDUyYS05YWI0LWFkN2IwZGU5NzYwNiIsImVtYWlsIjoiY29tbWVyY2FudDFAZWxpdGV0cmFjay5jb20iLCJyb2xlIjoibWVyY2hhbnQiLCJuYW1lIjoiWmFyb3VhbCBNZWRwIiwiaWF0IjoxNzc1MjM2MDY4LCJleHAiOjE3NzU4NDA4Njh9.CMfmK8zpj-PUVY34xAojjwmBBEW_MkP74zJTk9egjSs",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer{{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/auth/me",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Commandes",
+      "item": [
+        {
+          "name": "Creer une commandes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "pm.collectionVariables.set(\"orderId\", pm.response.json().id);\r",
+                  "pm.test('Commande créée', () => pm.expect(pm.response.code).to.equal(201));\r",
+                  "pm.test(\"Order ID is not null\", () => { pm.expect(pm.response.json().id).to.not.be.null; });\r",
+                  "pm.test(\"Order ID is a number\", () => { pm.expect(pm.response.json().id).to.be.a('string'); });\r",
+                  "pm.collectionVariables.set('tracking_token', pm.response.json().tracking_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"client_name\": \"Ali Hassan\",\r\n  \"client_phone\": \"+212600000099\",\r\n  \"client_email\": \"ali.hassan@gmail.com\",\r\n  \"delivery_address\": \"Hay Riad, Rue 14, Rabat\",\r\n  \"delivery_lat\": 33.9716,\r\n  \"delivery_lng\": -6.8498,\r\n  \"notes\": \"Sonner 2 fois, 3ème étage\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/orders",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Liste des commandes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/orders?page=1&limit=20",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Statistiques dashboard",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/orders/stats",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "stats"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Assigner un livreur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"status=assigned\", ()  => {pm.expect(pm.response.json().status).to.eql(\"assigned\")});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"driver_id\": \"{{driver_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/orders/{{orderId}}/assign",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}",
+                "assign"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mettre à jour statut — En cours",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"status = in_progress\", () => { pm.expect(pm.response.json().status).to.eql(\"in_progress\") })\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"in_progress\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/orders/{{orderId}}/status",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mettre à jour statut — Livré",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"status=delivered\", ()  => {pm.expect(pm.response.json().status).to.eql(\"delivered\")});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"delivered\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/orders/{{orderId}}/status",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mettre à jour statut — Annulé",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "pm.test(\"status=cancelled\", ()  => {pm.expect(pm.response.json().status).to.eql(\"cancelled\")});\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  "\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"cancelled\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/orders/{{orderId}}/status",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Commandes du livreur connecté",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_Livreur}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/orders/driver",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "driver"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Suivi public — Client (sans auth)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_Livreur}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/orders/track/{{tracking_token}}",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "track",
+                "{{tracking_token}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Utilisateurs & Livreurs",
+      "item": [
+        {
+          "name": "Liste des livreurs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Livreurs récupérés', () => pm.expect(pm.response.code).to.equal(200));\r",
+                  "pm.test('Résultat est un array', () => pm.expect(pm.response.json()).to.be.an('array'));\r",
+                  "if (pm.response.json().length > 0) {\r",
+                  "  pm.collectionVariables.set('driver_id', pm.response.json()[0].id);\r",
+                  "  console.log('Premier driver_id sauvegardé:', pm.response.json()[0].id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/users/drivers",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "drivers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Créer un livreur (par commerçant)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {\r",
+                  "  const json = pm.response.json();\r",
+                  "  pm.collectionVariables.set('driver_id', json.id);\r",
+                  "  console.log('Nouveau livreur ID:', json.id);\r",
+                  "  pm.test('Livreur créé', () => pm.expect(pm.response.code).to.equal(201));\r",
+                  "  pm.test('Rôle = driver', () => pm.expect(json).to.have.property('id'));\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Youssef Alami\",\r\n  \"email\": \"youssef.livreur1@elitetrack.com\",\r\n  \"phone\": \"+212600000003\",\r\n  \"password\": \"password123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{Base_url}}/api/users/drivers",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "drivers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activer / Désactiver un livreur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Toggle réussi', () => pm.expect(pm.response.code).to.equal(200));\r",
+                  "pm.test('is_active présent', () => pm.expect(pm.response.json().is_active).to.be.a('boolean'));\r",
+                  "console.log('Nouveau statut is_active:', pm.response.json().is_active);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/users/drivers/{{driver_id}}/toggle",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "drivers",
+                "{{driver_id}}",
+                "toggle"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Notifications de l'utilisateur",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Notifications récupérées', () => pm.expect(pm.response.code).to.equal(200));\r",
+                  "pm.test('Résultat est un array', () => pm.expect(pm.response.json()).to.be.an('array'));\r",
+                  "console.log('Nombre de notifications:', pm.response.json().length);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/users/notifications",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Notifications de l'utilisateur Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Notifications récupérées', () => pm.expect(pm.response.code).to.equal(200));\r",
+                  "pm.test('Résultat est un array', () => pm.expect(pm.response.json()).to.be.an('array'));\r",
+                  "console.log('Nombre de notifications:', pm.response.json().length);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{Base_url}}/api/users/notifications",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tests Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Serveur en ligne', () => pm.expect(pm.response.code).to.equal(200));\r",
+                  "pm.test('Status ok', () => pm.expect(pm.response.json().status).to.equal('ok'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Base_url}}/health",
+              "host": [
+                "{{Base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "driver_id",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    },
+    {
+      "key": "token_Livreur",
+      "value": ""
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    },
+    {
+      "key": "tracking_token",
+      "value": ""
+    }
+  ]
+}
